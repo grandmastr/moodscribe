@@ -2,9 +2,18 @@ import {getUserByClerkId} from '@/utils/auth';
 import {prisma} from '@/utils/db';
 import {EntryCard, NewEntryCard} from '@/components';
 import Link from 'next/link';
+import {analyze} from '@/utils/ai';
 
 const getEntries = async () => {
   const user = await getUserByClerkId();
+
+  await analyze(
+    `I'm going to give you a journal entry, i want you to analyze it for a few things. I need the mood, a summary, what the subject is, and a color representing the mood. You need to respond back with formatted JSON like so: {"mood": "", "subject": "", "color": "", "negative": "", "summary": ""}. 
+      entry:
+      Today was a really great day. I finally was able to grab that pair of shoes I have been dying to get.
+    `
+  );
+
   return prisma.journalEntry.findMany({
     where: {
       userId: user.id,
